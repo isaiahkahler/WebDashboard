@@ -1,0 +1,24 @@
+h1,h2,h3,h4,h5,h6{font-family: 'Heebo', sans-serif;}
+
+p{font-family: 'Roboto', sans-serif;}
+
+
+.page{
+    margin-top: 32px;
+}
+
+.tell-user{
+    display: none;
+}
+
+/* ICONS */
+.circle{
+    color: #ff0000;
+    margin-left: 5px;
+    width: 15px;
+    height: 15px;
+    border: solid 1px currentColor;
+    background-color: currentColor;
+    border-radius: 100%;
+  }
+  
