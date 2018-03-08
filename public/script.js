@@ -59,7 +59,6 @@ function updateStatus(data){
         $('.robot-con-status').innerHTML = "Robot is not connected";
         $('.robot-con-color').style.color = "#ff0000";
         if(data.hasOwnProperty("error")){
-            $('.tell-user').style.display = "block";
             tellUser("ERROR CONNECTING TO ROBOT", JSON.stringify(data.error));
         }
     } else if(data.status == "connecting"){
@@ -69,6 +68,7 @@ function updateStatus(data){
 }
 
 function tellUser(title, body){
+    $('.tell-user').style.display = "block";
     $('.tell-user-title').innerHTML = title;
     $('.tell-user-body').innerHTML = body;
     $('.tell-user-close').addEventListener("click", event => {
