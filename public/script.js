@@ -88,3 +88,20 @@ function tellUser(title, body) {
 function findData(){
 
 }
+
+//UI
+
+let panels = [];
+
+$('.add-panel').addEventListener('click', event => {
+    $('.add-panel').style.display = 'none';
+    $('.panel-menu').style.display = 'block';
+    $('.panel-menu-close').addEventListener('click', event => {
+        $('.panel-menu').style.display = 'none';
+        $('.add-panel').style.display = 'inline';
+    });
+});
+
+$('.add-camera').addEventListener('click', event => {
+    
+});

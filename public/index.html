@@ -8,12 +8,14 @@
 </head>
 
 <body>
-    <button class="function start">Start</button>
+    <!-- <button class="function start">Start</button>
     <button class="function stop">Stop</button>
-    <button class="function test">test</button>
+    <button class="function test">test</button> -->
 
     <div class="container is-fluid page">
-        <div class="level">
+
+        <!-- HEADER -->
+        <div class="level head">
             <div class="level-left">
                 <strong>SmarterDashboard</strong>
             </div>
@@ -31,6 +33,34 @@
                     <p class="title tell-user-title">Title</p>
                     <p class="tell-user-body">Body</p>
                 </div>
+            </div>
+        </div>
+
+        <!-- MENU -->
+        <div class="level panel-menu">
+            <div class="tile is-parent level-item">
+                <div class="tile is-child is-6 notification is-info">
+                    <button class="delete panel-menu-close"></button>
+                    <div class="menu">
+                        <ul class="menu-list">
+                            <p class="menu-label">Panels</p>
+                            <li>
+                                <a class="add-camera">Camera Stream</a>
+                            </li>
+                            <li>
+                                <a>Test</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- BODY -->
+        <div class="columns row">
+            <div class="column has-text-centered">
+                <button class="button is-rounded is-info add-panel">add panel</span>
+                </button>
             </div>
         </div>
 
