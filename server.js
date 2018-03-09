@@ -6,13 +6,11 @@ const ntClient = require('wpilib-nt-client');
 const client = new ntClient.Client();
 
 let connection_state = 'disconnected';
-
-app.use(express.static('public'));
-// app.get('/', (req, res) => {
-// });
-
 let websock;
 
+app.use(express.static('public'));
+
+//establish socket i think and then listen and sort through messages 
 app.ws('/socket', (ws, req) => {
     ws.on('message', (msg) => {
         switch (msg) {
@@ -28,7 +26,6 @@ app.ws('/socket', (ws, req) => {
                 break;
             default:
                 console.log(`unknown command ${msg}`);
-
         }
     });
     websock = ws;
@@ -39,7 +36,7 @@ app.ws('/socket', (ws, req) => {
 
 app.listen(port, () => console.log(`started server on port: ${port}`));
 
-
+//establish connection with robot NT server
 function start() {
 
     console.log('ran start function');
@@ -53,7 +50,7 @@ function start() {
         sendStatus(status, err);
     }, 'roborio-5263-frc.local'); //roborio-5263-frc.local
 
-    // listen for incoming data from robot
+    // listen for incoming data from robot and send to client
     client.addListener((key, val, type, id) => {
         websock.sendJSON({
             type: 'nt-data',
@@ -66,6 +63,7 @@ function start() {
 
 }
 
+//disconnect from robot NT server
 function stop() {
     console.log("ran stop function");
     client.removeListener();
@@ -73,6 +71,7 @@ function stop() {
 
 }
 
+//hand connection status to client
 function sendStatus(status, err = null){
     websock.sendJSON({
         type: 'status',

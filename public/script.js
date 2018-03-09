@@ -8,7 +8,9 @@ function $(selector) {      //jquery-like dollar sign query selector
 
 let connection_state = false;
 
-let socket = new WebSocket("ws:localhost:8080/socket");
+const socket = new WebSocket("ws:localhost:8080/socket");
+
+//establish connection to client server
 socket.onopen = function (event) {
 
     let functionElements = document.getElementsByClassName("function");
@@ -21,13 +23,10 @@ socket.onopen = function (event) {
     }
 
     sendData('getstatus');
-    
+ 
 };
 
-function sendData(data) {
-    socket.send(data);
-}
-
+//listen for incoming messages from the client server, from type call function
 socket.addEventListener('message', event => {
     let data = JSON.parse(event.data);
     switch (data.type) {
@@ -46,6 +45,11 @@ socket.addEventListener('message', event => {
     }
 });
 
+function sendData(data) {
+    socket.send(data);
+}
+
+//change page based on connection status
 /**
  * 
  * @param {JSON} data 
@@ -70,6 +74,7 @@ function updateStatus(data) {
     }
 }
 
+//alert the user of some problem
 function tellUser(title, body) {
     $('.tell-user').style.display = "block";
     $('.tell-user-title').innerHTML = title;
