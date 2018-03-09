@@ -6,13 +6,13 @@ function $(selector) {      //jquery-like dollar sign query selector
     return document.querySelector(selector);
 };
 
-let conStatus = false;
+let connection_state = false;
 
 let socket = new WebSocket("ws:localhost:8080/socket");
 socket.onopen = function (event) {
 
     let functionElements = document.getElementsByClassName("function");
-
+    
     for (const element of functionElements) {
         let fxName = element.classList[1];
         element.addEventListener("click", (event) => {
@@ -20,6 +20,8 @@ socket.onopen = function (event) {
         });
     }
 
+    sendData('getstatus');
+    
 };
 
 function sendData(data) {
@@ -50,15 +52,17 @@ socket.addEventListener('message', event => {
  */
 function updateStatus(data) {
     if (data.status == "connected") {
-        conStatus = true;
+        connection_state = true;
         $('.robot-con-status').innerHTML = "Robot is connected";
         $('.robot-con-color').style.color = "#00ff00";
     } else if (data.status == 'disconnected') {
-        conStatus = false;
+        connection_state = false;
         $('.robot-con-status').innerHTML = "Robot is not connected";
         $('.robot-con-color').style.color = "#ff0000";
         if (data.hasOwnProperty("error")) {
-            tellUser("ERROR CONNECTING TO ROBOT", JSON.stringify(data.error));
+            if(data.error != null){
+                tellUser("ERROR CONNECTING TO ROBOT", JSON.stringify(data.error));
+            }
         }
     } else if (data.status == "connecting") {
         $('.robot-con-status').innerHTML = "Connecting to robot...";
@@ -75,3 +79,7 @@ function tellUser(title, body) {
     });
 }
 
+
+function findData(){
+
+}

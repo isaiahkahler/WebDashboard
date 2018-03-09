@@ -5,6 +5,7 @@ const expressWs = require('express-ws')(app);
 const ntClient = require('wpilib-nt-client');
 const client = new ntClient.Client();
 
+let connection_state = 'disconnected';
 
 app.use(express.static('public'));
 // app.get('/', (req, res) => {
@@ -16,21 +17,14 @@ app.ws('/socket', (ws, req) => {
     ws.on('message', (msg) => {
         switch (msg) {
             case "start":
-                websock.sendJSON({
-                    type: 'status',
-                    status: 'connecting'
-                });
+                sendStatus('connecting');
                 start();
                 break;
             case "stop":
                 stop();
                 break;
-            case "test":
-                let test = {
-                    type: "test",
-                    text: "bruh this is a test"
-                };
-                ws.send(JSON.stringify(test));
+            case "getstatus":
+                sendStatus(connection_state);
                 break;
             default:
                 console.log(`unknown command ${msg}`);
@@ -48,42 +42,43 @@ app.listen(port, () => console.log(`started server on port: ${port}`));
 
 function start() {
 
+    console.log('ran start function');
 
-    // Connects the client to the server on team 3571's roborio
-    client.start((isConnected, err) => {
-        // Displays the error and the state of connection
+    client.start((isConnected, err) => {    //called every time start or stop is called on client OR connection is physically lost to robot
         console.log({ isConnected, err });
         let status = "disconnected";
-        if(isConnected){
+        if (isConnected) {
             status = "connected";
-        } 
-        websock.sendJSON({
-            type: 'status',
-            text: "connection status",
-            status: status,
-            error: err
-        });
+        }
+        sendStatus(status, err);
     }, 'roborio-5263-frc.local'); //roborio-5263-frc.local
 
-    // Adds a listener to the client
+    // listen for incoming data from robot
     client.addListener((key, val, type, id) => {
-        // console.log({ key, val, type, id });
-        
         websock.sendJSON({
             type: 'nt-data',
-            text: `key: ${key} val: ${val} type: ${type} id: ${id}`
+            key: key,
+            val: val,
+            nttype: type,
+            id: id
         });
     })
-    console.log('ran start function');
 
 }
 
 function stop() {
     console.log("ran stop function");
-    websock.sendJSON({
-        type: 'status',
-        status: 'disconnected'
-    });
+    client.removeListener();
     client.stop();
 
+}
+
+function sendStatus(status, err = null){
+    websock.sendJSON({
+        type: 'status',
+        status: status,
+        error: err
+    });
+    connection_state = status;
+    console.log(`connection state: ${connection_state}`);
 }
