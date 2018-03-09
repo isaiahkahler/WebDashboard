@@ -55,7 +55,7 @@ function start() {
         console.log({ isConnected, err });
         let status = "disconnected";
         if(isConnected){
-            let status = "connected";
+            status = "connected";
         } 
         websock.sendJSON({
             type: 'status',
@@ -63,13 +63,14 @@ function start() {
             status: status,
             error: err
         });
-    }, 'roborio-5263-frc.local');
+    }, 'roborio-5263-frc.local'); //roborio-5263-frc.local
 
     // Adds a listener to the client
     client.addListener((key, val, type, id) => {
         // console.log({ key, val, type, id });
+        
         websock.sendJSON({
-            type: 'client message',
+            type: 'nt-data',
             text: `key: ${key} val: ${val} type: ${type} id: ${id}`
         });
     })

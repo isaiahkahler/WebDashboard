@@ -28,19 +28,18 @@ function sendData(data) {
 
 socket.addEventListener('message', event => {
     let data = JSON.parse(event.data);
-    console.log(data);
     switch (data.type) {
         case "status":
             updateStatus(data);
             break;
-            case "alert":
+        case "alert":
             break;
-            case "info":
+        case "info":
             break;
-            case "nt-data":
-                console.log(data);
+        case "nt-data":
+            console.log(data);
             break;
-            default:
+        default:
 
     }
 });
@@ -49,25 +48,25 @@ socket.addEventListener('message', event => {
  * 
  * @param {JSON} data 
  */
-function updateStatus(data){
-    if(data.status == "connected"){
+function updateStatus(data) {
+    if (data.status == "connected") {
         conStatus = true;
         $('.robot-con-status').innerHTML = "Robot is connected";
         $('.robot-con-color').style.color = "#00ff00";
-    } else if(data.status == 'disconnected'){
+    } else if (data.status == 'disconnected') {
         conStatus = false;
         $('.robot-con-status').innerHTML = "Robot is not connected";
         $('.robot-con-color').style.color = "#ff0000";
-        if(data.hasOwnProperty("error")){
+        if (data.hasOwnProperty("error")) {
             tellUser("ERROR CONNECTING TO ROBOT", JSON.stringify(data.error));
         }
-    } else if(data.status == "connecting"){
+    } else if (data.status == "connecting") {
         $('.robot-con-status').innerHTML = "Connecting to robot...";
         $('.robot-con-color').style.color = "#eeee00";
     }
 }
 
-function tellUser(title, body){
+function tellUser(title, body) {
     $('.tell-user').style.display = "block";
     $('.tell-user-title').innerHTML = title;
     $('.tell-user-body').innerHTML = body;
