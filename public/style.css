@@ -28,6 +28,18 @@ a, u{text-decoration: none !important;}
     width: 100%;
 }
 
+.white{
+    color: #ffffff;
+}
+
+/* .justify-right{
+    justify-content: right;
+}
+
+.justify-left{
+    justify-content: left;
+} */
+
 /* ICONS */
 .circle{
     color: #ff0000;
