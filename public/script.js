@@ -7,22 +7,24 @@ function $(selector) {      //jquery-like dollar sign query selector
 };
 
 let connection_state = false;
+let connection_retry = false;
 let connection_retried = 0;
+let ntdata = {};
 
 const socket = new WebSocket("ws:localhost:8080/socket");
 
 //establish connection to client server
 socket.addEventListener('open', event => {
-console.log("connected to websocket");
-let functionElements = document.getElementsByClassName("function");
-    
-for (const element of functionElements) {
-    let fxName = element.classList[1];
-    element.addEventListener("click", (event) => {
-        sendData(fxName);
-    });
-}
-sendData("start");
+    console.log("connected to websocket");
+    let functionElements = document.getElementsByClassName("function");
+
+    for (const element of functionElements) {
+        let fxName = element.classList[1];
+        element.addEventListener("click", (event) => {
+            sendData(fxName);
+        });
+    }
+    sendData("getstatus");
 });
 
 //listen for incoming messages from the client server, from type call function
@@ -37,7 +39,7 @@ socket.addEventListener('message', event => {
         case "info":
             break;
         case "nt-data":
-            console.log(data);
+            ntdata[`${data.key}`] = data.val;
             break;
         default:
 
@@ -63,9 +65,11 @@ function updateStatus(data) {
         $('.robot-con-status').innerHTML = "Robot is not connected";
         $('.robot-con-color').style.color = "#ff0000";
         if (data.hasOwnProperty("error")) {
-            if(data.error != null){
+            if (data.error != null) {
                 tellUser("ERROR CONNECTING TO ROBOT", JSON.stringify(data.error));
-            } 
+            } else {
+                connection_retry = true;
+            }
         }
     } else if (data.status == "connecting") {
         $('.robot-con-status').innerHTML = "Connecting to robot...";
@@ -84,7 +88,8 @@ function tellUser(title, body) {
 }
 
 
-function findData(){
+function findData(key) {
+    return ntdata[`${key}`];
 }
 
 //UI
@@ -98,11 +103,14 @@ $('.add-panel').addEventListener('click', event => {
     });
 });
 
-// $('.addcamera').addEventListener('click', event => {
-//     let camera = document.createElement('iframe');
-//     camera.setAttribute('src', 'https://www.w3schools.com');
-//     $('.body').appendChild(camera);
-// });
+$('.add-to-panel.camera').addEventListener('click', event => {
+    let camera = document.createElement('iframe');
+    let cameraurl = findData("/CameraPublisher/USB Camera 0/streams");
+    if (cameraurl != null) {
+        camera.setAttribute('src', cameraurl[0]);
+    }
+    $('.body').appendChild(camera);
+});
 
 /*CAMERA 
 need link 

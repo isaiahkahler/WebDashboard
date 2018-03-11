@@ -39,27 +39,29 @@ app.listen(port, () => console.log(`started server on port: ${port}`));
 //establish connection with robot NT server
 function start() {
 
-    console.log('ran start function');
+    if (connection_state != "connected") {
 
-    client.start((isConnected, err) => {    //called every time start or stop is called on client OR connection is physically lost to robot
-        console.log({ isConnected, err });
-        let status = "disconnected";
-        if (isConnected) {
-            status = "connected";
-        }
-        sendStatus(status, err);
-    }, 'roborio-5263-frc.local'); //roborio-5263-frc.local
+        console.log('ran start function');
+        client.start((isConnected, err) => {    //called every time start or stop is called on client OR connection is physically lost to robot
+            console.log({ isConnected, err });
+            let status = "disconnected";
+            if (isConnected) {
+                status = "connected";
+            }
+            sendStatus(status, err);
+        }, 'roborio-5263-frc.local'); //roborio-5263-frc.local
+        // listen for incoming data from robot and send to client
+        client.addListener((key, val, type, id) => {
+            websock.sendJSON({
+                type: 'nt-data',
+                key: key,
+                val: val,
+                nttype: type,
+                id: id
+            });
+        })
+    }
 
-    // listen for incoming data from robot and send to client
-    client.addListener((key, val, type, id) => {
-        websock.sendJSON({
-            type: 'nt-data',
-            key: key,
-            val: val,
-            nttype: type,
-            id: id
-        });
-    })
 
 }
 
@@ -72,7 +74,7 @@ function stop() {
 }
 
 //hand connection status to client
-function sendStatus(status, err = null){
+function sendStatus(status, err = null) {
     websock.sendJSON({
         type: 'status',
         status: status,
